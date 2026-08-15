@@ -1,0 +1,13 @@
+const playDemoBtn = document.getElementById("playDemo");
+const audio = new Audio();
+
+audio.src =
+  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=";
+
+playDemoBtn.addEventListener("click", () => {
+  audio.currentTime = 0;
+  audio.play().catch(error => {
+    console.error("Demo playback failed:", error);
+    alert("Unable to play demo.");
+  });
+});
