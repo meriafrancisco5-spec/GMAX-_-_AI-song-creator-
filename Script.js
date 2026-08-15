@@ -1,105 +1,95 @@
-function generateSong() {
-  const title = document.getElementById("title").value.trim();
-  const genre = document.getElementById("genre").value;
-  const language = document.getElementById("language").value;
-  const idea = document.getElementById("idea").value.trim();
+const titleInput = document.getElementById("title");
+const genreInput = document.getElementById("genre");
+const lyricsInput = document.getElementById("lyrics");
 
-  const status = document.getElementById("status");
-  const lyrics = document.getElementById("lyrics");
+const generateLyricsBtn = document.getElementById("generateLyrics");
+const generateSongBtn = document.getElementById("generateSong");
+const playDemoBtn = document.getElementById("playDemo");
 
-  if (!title || !idea) {
-    status.textContent = "Please enter a title and song idea.";
+let currentLyrics = "";
+
+function makeLyrics(title, genre) {
+  return `[Verse 1]
+This is my story, this is my time,
+Ndikukwera mmwamba, I'm ready to shine.
+No fear in my heart, no turning back,
+GMAX on the track, I'm staying on track.
+
+[Chorus]
+${title}, we rise tonight,
+Tili limodzi, we're ready to fight.
+From the bottom mpaka ku top,
+We keep moving, we never stop.
+
+[Verse 2]
+Life gets hard but I keep my pace,
+Ndikupita patsogolo, I'm winning this race.
+Dreams in my mind, fire in my soul,
+One day soon, I'll reach my goal.
+
+[Chorus]
+${title}, we rise tonight,
+Tili limodzi, we're ready to fight.
+From the bottom mpaka ku top,
+We keep moving, we never stop.
+
+[Outro]
+GMAX, remember the name,
+Music in my heart, I'm chasing the fame.`;
+}
+
+generateLyricsBtn?.addEventListener("click", () => {
+  const title = titleInput?.value.trim() || "My Song";
+  const genre = genreInput?.value.trim() || "Rap";
+
+  currentLyrics = makeLyrics(title, genre);
+
+  if (lyricsInput) {
+    lyricsInput.value = currentLyrics;
+  }
+
+  alert("Lyrics generated successfully! 🎵");
+});
+
+generateSongBtn?.addEventListener("click", () => {
+  const title = titleInput?.value.trim() || "My Song";
+
+  if (!currentLyrics) {
+    currentLyrics = makeLyrics(title, genreInput?.value || "Rap");
+
+    if (lyricsInput) {
+      lyricsInput.value = currentLyrics;
+    }
+  }
+
+  alert(
+    "Song created successfully! 🎵🔥\n\n" +
+    "Title: " + title +
+    "\n\nAudio demo is ready to play."
+  );
+
+  if (playDemoBtn) {
+    playDemoBtn.disabled = false;
+  }
+});
+
+playDemoBtn?.addEventListener("click", () => {
+  const text = currentLyrics || lyricsInput?.value;
+
+  if (!text) {
+    alert("First generate the lyrics 🎵");
     return;
   }
 
-  status.textContent = "Creating your song... 🎵";
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
 
-  setTimeout(() => {
-    let song = "";
+    const voice = new SpeechSynthesisUtterance(text);
+    voice.rate = 0.9;
+    voice.pitch = 0.8;
 
-    if (language === "English + Chichewa") {
-      song = `[INTRO]
-Yeah yeah...
-V5.5 in the building!
-${title}, let's go!
-
-[VERSE 1]
-I came from the bottom, now I'm reaching the sky,
-Ndikugwira ntchito, I was born to fly.
-They never believed me, but I stayed on track,
-Tsopano ndabwera, and I'm never looking back.
-
-[CHORUS]
-${title}, this is my time,
-Ndikukwera mmwamba, everything gonna shine.
-${idea},
-We keep moving forward, we will never decline.
-
-[VERSE 2]
-Pain made me stronger, pressure made me wise,
-Ndinagwa kangapo, but I had to rise.
-No fear in my heart, determination in my mind,
-One day we'll make it, leave the struggle behind.
-
-[OUTRO]
-V5.5...
-${title}...
-We keep moving! 🔥`;
-    } 
-    else if (language === "Chichewa") {
-      song = `[CHORUS]
-${title}, iyi ndi nthawi yanga,
-Ndikupita patsogolo, sindibwerera.
-${idea},
-Ndikulimbikira mpaka ndifikire pamwamba.
-
-[VERSE 1]
-Ndinayamba pansi koma ndili ndi maloto,
-Mavuto ambiri koma sinditaya mtima.
-Anthu akunena, koma ine ndikudziwa,
-Tsiku lina ndidzafika komwe ndikufuna.
-
-[VERSE 2]
-Moyo ndi nkhondo, koma ndipitiriza,
-Ndimagwira ntchito, sindingosiya.
-V5.5 pa beat, tikukwera mmwamba,
-GMAX ali pano, tikupanga mbiri.
-
-[OUTRO]
-${title}...
-Tiyeni tipite patsogolo! 🔥`;
-    } 
-    else {
-      song = `[INTRO]
-Yeah...
-V5.5!
-${title}!
-
-[VERSE 1]
-I came from the struggle, I came from the pain,
-Walking through the storm, standing in the rain.
-${idea},
-I'm chasing my dream, I will never complain.
-
-[CHORUS]
-${title}, this is my time,
-I'm turning my struggle into a rhyme.
-${idea},
-I'm climbing higher, I'm ready to shine.
-
-[VERSE 2]
-They tried to stop me, I kept moving on,
-Darkness around me but I waited for dawn.
-Every single failure made me strong,
-Now I'm writing my story inside this song.
-
-[OUTRO]
-V5.5...
-${genre} vibes...
-GMAX! 🔥`;
-    }
-
-    lyrics.textContent = song;
-    status.textContent = "Song generated successfully! 🎉";
-  }, 1000);
+    window.speechSynthesis.speak(voice);
+  } else {
+    alert("Your browser does not support audio playback.");
   }
+});
