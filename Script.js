@@ -1,95 +1,46 @@
-const titleInput = document.getElementById("title");
-const genreInput = document.getElementById("genre");
-const lyricsInput = document.getElementById("lyrics");
+const generateButton = document.getElementById("generateButton");
+const promptInput = document.getElementById("prompt");
+const result = document.getElementById("result");
 
-const generateLyricsBtn = document.getElementById("generateLyrics");
-const generateSongBtn = document.getElementById("generateSong");
-const playDemoBtn = document.getElementById("playDemo");
+generateButton.addEventListener("click", async () => {
+  const prompt = promptInput.value.trim();
 
-let currentLyrics = "";
-
-function makeLyrics(title, genre) {
-  return `[Verse 1]
-This is my story, this is my time,
-Ndikukwera mmwamba, I'm ready to shine.
-No fear in my heart, no turning back,
-GMAX on the track, I'm staying on track.
-
-[Chorus]
-${title}, we rise tonight,
-Tili limodzi, we're ready to fight.
-From the bottom mpaka ku top,
-We keep moving, we never stop.
-
-[Verse 2]
-Life gets hard but I keep my pace,
-Ndikupita patsogolo, I'm winning this race.
-Dreams in my mind, fire in my soul,
-One day soon, I'll reach my goal.
-
-[Chorus]
-${title}, we rise tonight,
-Tili limodzi, we're ready to fight.
-From the bottom mpaka ku top,
-We keep moving, we never stop.
-
-[Outro]
-GMAX, remember the name,
-Music in my heart, I'm chasing the fame.`;
-}
-
-generateLyricsBtn?.addEventListener("click", () => {
-  const title = titleInput?.value.trim() || "My Song";
-  const genre = genreInput?.value.trim() || "Rap";
-
-  currentLyrics = makeLyrics(title, genre);
-
-  if (lyricsInput) {
-    lyricsInput.value = currentLyrics;
-  }
-
-  alert("Lyrics generated successfully! 🎵");
-});
-
-generateSongBtn?.addEventListener("click", () => {
-  const title = titleInput?.value.trim() || "My Song";
-
-  if (!currentLyrics) {
-    currentLyrics = makeLyrics(title, genreInput?.value || "Rap");
-
-    if (lyricsInput) {
-      lyricsInput.value = currentLyrics;
-    }
-  }
-
-  alert(
-    "Song created successfully! 🎵🔥\n\n" +
-    "Title: " + title +
-    "\n\nAudio demo is ready to play."
-  );
-
-  if (playDemoBtn) {
-    playDemoBtn.disabled = false;
-  }
-});
-
-playDemoBtn?.addEventListener("click", () => {
-  const text = currentLyrics || lyricsInput?.value;
-
-  if (!text) {
-    alert("First generate the lyrics 🎵");
+  if (!prompt) {
+    result.textContent = "Please enter a song idea first.";
     return;
   }
 
-  if ("speechSynthesis" in window) {
-    window.speechSynthesis.cancel();
+  result.textContent = "🎵 Creating your song...";
 
-    const voice = new SpeechSynthesisUtterance(text);
-    voice.rate = 0.9;
-    voice.pitch = 0.8;
+  try {
+    // Demo generator — works without an API key
+    const lyrics = `
+[Verse 1]
+${prompt}, I'm rising from the ground,
+GMAX on the mic, you know I'm coming with the sound.
+No matter what they say, I keep moving ahead,
+Dreams in my heart and fire in my head.
 
-    window.speechSynthesis.speak(voice);
-  } else {
-    alert("Your browser does not support audio playback.");
+[Chorus]
+We rise, we shine, we never fall,
+GMAX on the beat, giving everything our all.
+From the dust to the sky, we're going high,
+This is our moment — watch us fly.
+
+[Verse 2]
+Started with a dream, now I'm building my name,
+Step by step, I'm playing my own game.
+Hard times came but they couldn't stop me,
+Now I'm standing strong — everybody watch me.
+
+[Outro]
+GMAX — remember the name.
+One dream, one sound, one flame.
+`;
+
+    result.textContent = lyrics;
+  } catch (error) {
+    result.textContent = "Something went wrong. Please try again.";
+    console.error(error);
   }
 });
